@@ -7,7 +7,7 @@ from datetime import datetime
 from os import path
 
 env.hosts = ['35.237.172.160', '35.237.222.103']
-
+env.user = 'ubuntu'
 
 def do_deploy(archive_path):
     """ * Prototype: def do_deploy(archive_path):
@@ -41,16 +41,17 @@ def do_deploy(archive_path):
     if not path.exists(archive_path):
         return False
     try:
-        NameArchive = archive_path[9:]
-        NameArchiveWitoutExtension = NameArchive[:-4]
-        put(archive_path, "/temp/" + NameArchive)
+        NameArchive = archive_path.split('/')[-1]
+        NameArchiveWitoutExtension = NameArchive.replace('.tgz', '')
+        put(archive_path, "/temp/")
         run("sudo mkdir -p /data/web_static/releases/" + NameArchiveWitoutExtension)
-        run("sudo tar -xzvf /tmp/" + NameArchive + " -C /data/web_static/releases/"
-            + NameArchiveWitoutExtension + " --strip-components=1")
+        run("sudo tar -xzvf /tmp/" + NameArchive + " -C /data/web_static/releases/")
         run("sudo rm -rf /tmp/" + NameArchive)
+
+        run("sudo mv /data/web_static/releases/web_static/* /data/web_static/releases/")
+        run("sudo rm -rf /data/web_static/releases/web_static")
         run("sudo rm -rf /data/web_static/current")
-        run("sudo ln -sf /data/web_static/releases/"
-            + NameArchiveWitoutExtension + "/data/web_static/current")
+        run("sudo ln -sf /data/web_static/releases/ /data/web_static/current")
 
         return True
     except Exception:
