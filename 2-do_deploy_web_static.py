@@ -7,7 +7,7 @@ from datetime import datetime
 from os import path
 
 env.hosts = ['35.237.172.160', '35.237.222.103']
-
+env.user = "ubuntu"
 
 def do_deploy(archive_path):
     """ * Prototype: def do_deploy(archive_path):
@@ -43,37 +43,16 @@ def do_deploy(archive_path):
     try:
         NameArchive = archive_path[9:]
         NameArchiveWitoutExtension = NameArchive[:-4]
-        put(archive_path, "/temp/" + NameArchive)
-        run("mkdir -p /data/web_static/releases/" + NameArchiveWitoutExtension)
-        run("tar -xzvf /tmp/" + NameArchive + " -C /data/web_static/releases/"
+        pathR = "/data/web_static/releases/"
+        pathC = "/data/web_static/current"
+        put(archive_path, "/tmp/" + NameArchive)
+        run("mkdir -p "+ pathR + NameArchiveWitoutExtension)
+        run("tar -xzvf /tmp/" + NameArchive + " -C " + pathR
             + NameArchiveWitoutExtension + " --strip-components=1")
         run("rm -rf /tmp/" + NameArchive)
-        run("rm -rf /data/web_static/current")
-        run("sudo ln -sf /data/web_static/releases/"
-            + NameArchiveWitoutExtension + "/data/web_static/current")
-
+        run("rm -rf " + pathC)
+        run("sudo ln -sf " + pathR
+            + NameArchiveWitoutExtension + pathC)
         return True
     except Exception:
         return False
-
-
-def do_pack():
-    """ Prototype: def do_pack():
-    * All files in the folder web_static must be added to the final archive
-    * All archives must be stored in the folder versions (your function should
-    create this folder if it doesn’t exist)
-    * The name of the archive created must be
-    web_static_<year><month><day><hour><minute><second>.tgz
-    * The function do_pack must return the archive path if the archive has
-    been correctly generated. Otherwise, it should return None """
-    try:
-        now = datetime.now()
-        NameArchive = "web_static" + now.strftime("%Y%m%d%H%M%S")+".tgz"
-
-        PathArchive = "versions/" + NameArchive
-
-        local("sudo mkdir -p versions")
-        local("tar -czvf" + PathArchive + " web_static")
-        return PathArchive
-    except Exception:
-        return None

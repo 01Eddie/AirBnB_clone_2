@@ -17,12 +17,12 @@ def do_pack():
     been correctly generated. Otherwise, it should return None """
     try:
         now = datetime.now()
-        NameArchive = "web_static" + now.strftime("%Y%m%d%H%M%S")+".tgz"
+        NameArchive = "web_static_" + now.strftime("%Y%m%d%H%M%S")+ ".tgz"
 
         PathArchive = "versions/" + NameArchive
 
         local("sudo mkdir -p versions")
-        local("tar -czvf" + PathArchive + " web_static")
+        local("sudo tar -czvf {} web_static".format(PathArchive))
         return PathArchive
     except Exception:
         return None
