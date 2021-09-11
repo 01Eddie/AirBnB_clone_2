@@ -1,5 +1,4 @@
 from flask import Flask, render_template
-from sqlalchemy.sql.expression import text
 
 app = Flask(__name__)
 
