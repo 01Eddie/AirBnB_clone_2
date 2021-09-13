@@ -17,6 +17,8 @@ class State(BaseModel, Base):
     else:
         name = ""
 
+    """ If your storage engine is not DBStorage, add a public getter method cities to return the list of City objects from storage linked to the current State """
+        
     if getenv('HBNB_TYPE_STORAGE') != 'db':
         @property
         def cities(self):
